@@ -4,6 +4,7 @@ var async = require('async');
 var _ = require('underscore');
 var AV = require('avoscloud-sdk').AV;
 
+
 exports.getPH = function() {
     AV.initialize("xv1cgfapsn90hyy2a42i9q6jg7phbfmdpt1404li6n93tt2r", "70sp4h8prccxzyfp56vwm9ksczji36bsrjvtwzvrzegfza67");
 
@@ -61,33 +62,27 @@ exports.getPH = function() {
             }
             , function (productSet, callback) {
                 console.log('SuccessfulGetProductSet!!!!!-No:' + productSet.length);
-                // console.log(productSet);
-
                 var i = 0;
                 async.each(productSet, function (query, next) {
-                    request({url: query.productUrl, timeout: 5000}, function (error, response, body) {
+                    request({url: query.productUrl, followRedirect: false}, function (error, response, body) {
                         // console.log(query);
                         if (error) {
-                            console.log(query.productUrl);
-                            console.log(error + "  qqq   " + response);
 
+                            console.log(query.productUrl);
+                            //  console.log(response);
+                            console.log(error + "  qqq   " + response);
                         }
                         if (!error) {
                             if (response) {
-                                console.log("resStat:" + response.statusCode + "-" + "Host:" + response.request.uri.href + "   " + i++);
-                                query.productUrl = response.request.uri.href;
-
+                                // console.log(response);
+                                console.log("resStat:" + response.statusCode + "-" + "Host:" + response.headers.location + "   " + i++);
+                                query.productUrl = response.headers.location;
                             }
-
                             else {
                                 console.log(query.productUrl);
                                 console.log("No response!!! Timeout!!");
                             }
-
-
                         }
-
-
                         next();
                     });
 
@@ -116,9 +111,9 @@ exports.getPH = function() {
                                     success: function (resProduct) {
 
                                         var len = resProduct.length;
-                                        console.log(len + "++" + (++i));
+                                        //   console.log(len + "++" + (++i));
                                         if (len == 1) {
-                                            console.log("Existing in List!!" + apiProduct.productId);
+                                            //      console.log("productDetail!!" + apiProduct.productId);
                                             apiProduct.productRoot = resProduct[0];
                                         }
                                         callback(null, len);
@@ -127,7 +122,7 @@ exports.getPH = function() {
                             }
                             , function (len, callback) {
                                 if (len == 0) {
-                                    console.log("Not Existing in  List!!" + apiProduct.productId)
+                                    //      console.log("Not Existing in  List!!" + apiProduct.productId)
                                     product.set("source", "producthunt.com");
                                     product.set("name", apiProduct.productName);
                                     product.set("website", apiProduct.productUrl);
@@ -151,10 +146,10 @@ exports.getPH = function() {
                                 queryDetail.find({
                                     success: function (resProduct) {
                                         var len = resProduct.length;
-                                        console.log("productDetail: " + len + "-------------" + apiProduct.productRoot.id + "-------------------------" + (--i));
+                                        // console.log("productDetail: " + len + "-------------"  + (--i));
 
                                         if (len == 1) {
-                                            console.log("Exists in Detail !!!");
+                                            //      console.log("Exists in Detail !!!");
                                         }
 
                                         callback(null, len);
@@ -190,7 +185,7 @@ exports.getPH = function() {
                                 queryState.find({
                                     success: function (resProductState) {
                                         var len = resProductState.length;
-                                        console.log("resProductState:" + len + "--" + (++i));
+                                        //  console.log("resProductState:" + len + "--" + (++i));
                                         callback(null, len, resProductState);
 
                                     }
@@ -211,7 +206,7 @@ exports.getPH = function() {
                                     );
                                 }
                                 else if (len == 1) {
-                                    console.log("Existing in State !!   " + len + "--" + (++i))
+                                    //  console.log("Existing in State !!   " + len + "--" + (++i))
                                     resProductState[0].add("vote", apiProduct.productVote);
                                     resProductState[0].add("updateTime", apiProduct.updateTime);
                                     resProductState[0].add("commentCount", apiProduct.productComment);
@@ -235,5 +230,6 @@ exports.getPH = function() {
         , function (error) {
             if (error) console.log(error);
         });
+
 
 }

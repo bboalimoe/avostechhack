@@ -4,6 +4,7 @@ var async = require('async');
 var _ = require('underscore');
 var AV = require('avoscloud-sdk').AV;
 
+
 exports.getNext = function() {
     AV.initialize("xv1cgfapsn90hyy2a42i9q6jg7phbfmdpt1404li6n93tt2r", "70sp4h8prccxzyfp56vwm9ksczji36bsrjvtwzvrzegfza67");
 
@@ -87,17 +88,17 @@ exports.getNext = function() {
                 var i = 0;
                 async.each(productSet, function (query, next) {
 
-                    request({url: query.productUrl, timeout: 7000}, function (error, response, body) {
+                    request({url: query.productUrl, followRedirect: false}, function (error, response, body) {
                         // console.log(query);
                         if (error) {
                             console.log(query.productUrl);
                             console.log(error + "  fail to  Fetch Redirected Url    ");
-                            next();
+
                         }
                         if (!error) {
                             if (response) {
-
-                                var uriHref = response.request.uri.href.match(/(.*)[&?\??]utm_source=next\.36kr\.com/);
+                                console.log("resStat:" + response.statusCode + "-" + "Host:" + response.headers.location + "   " + i++);
+                                var uriHref = response.headers.location.match(/(.*)[&?\??]utm_source=next\.36kr\.com/);
                                 if (Array.isArray(uriHref)) {
                                     query.productUrl = uriHref[1];
                                 }
@@ -109,9 +110,9 @@ exports.getNext = function() {
                                 console.log("No response!!! Timeout!!");
                             }
 
-                            next();
-                        }
 
+                        }
+                        next();
                     });
 
                 }, function (err) {
@@ -143,7 +144,7 @@ exports.getNext = function() {
                                         var len = resProduct.length;
                                         //  console.log("List " + len + " ++ " + (++i));
                                         if (len == 1) {
-                                            console.log("Existing in List!!" + apiProduct.productId);
+                                            //     console.log("Existing in List!!" + apiProduct.productId);
                                             //   console.log(resProduct[0]);
                                             apiProduct.productRoot = resProduct[0];
                                             //    console.log(apiProduct.productRoot);
@@ -158,7 +159,7 @@ exports.getNext = function() {
                             , function (len, callback) {
 
                                 if (len == 0) {
-                                    console.log("Not Existing in  List!!" + apiProduct.productId)
+                                    //   console.log("Not Existing in  List!!" + apiProduct.productId)
 
                                     product.set("source", "next.36kr.com");
                                     product.set("name", apiProduct.productName);
@@ -191,10 +192,10 @@ exports.getNext = function() {
                                 queryDetail.find({
                                     success: function (resProduct) {
                                         var len = resProduct.length;
-                                        console.log("productDetail: " + len + "-------------" + apiProduct.productRoot.id + "-------------------------" + (--i));
+                                        //    console.log("productDetail: " + len + "-------------" + apiProduct.productRoot.id + "-------------------------" + (--i));
 
                                         if (len == 1) {
-                                            console.log("Exists in Detail !!!");
+                                            //      console.log("Exists in Detail !!!");
 
                                         }
                                         else if (len > 1) {
@@ -235,7 +236,7 @@ exports.getNext = function() {
                                 queryState.find({
                                     success: function (resProductState) {
                                         var len = resProductState.length;
-                                        console.log("resProductState:" + len + "--" + (++i));
+                                        //     console.log("resProductState:" + len + "--" + (++i));
                                         callback(null, len, resProductState);
 
                                     }
@@ -257,7 +258,7 @@ exports.getNext = function() {
                                     );
                                 }
                                 else if (len == 1) {
-                                    console.log("Existing in State !!   " + len + "--" + (++i))
+                                    //  console.log("Existing in State !!   " + len + "--" + (++i))
                                     resProductState[0].add("vote", apiProduct.productVote);
                                     resProductState[0].add("updateTime", apiProduct.updateTime);
                                     resProductState[0].add("commentCount", apiProduct.productComment);
