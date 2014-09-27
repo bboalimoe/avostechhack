@@ -4,7 +4,6 @@ var async = require('async');
 var _ = require('underscore');
 var AV = require('avoscloud-sdk').AV;
 
-
 exports.getNext = function() {
     AV.initialize("xv1cgfapsn90hyy2a42i9q6jg7phbfmdpt1404li6n93tt2r", "70sp4h8prccxzyfp56vwm9ksczji36bsrjvtwzvrzegfza67");
 
@@ -97,7 +96,7 @@ exports.getNext = function() {
                         }
                         if (!error) {
                             if (response) {
-                                console.log("resStat:" + response.statusCode + "-" + "Host:" + response.headers.location + "   " + i++);
+                                //    console.log("resStat:" + response.statusCode + "-" + "Host:" + response.headers.location + "   " + i++);
                                 var uriHref = response.headers.location.match(/(.*)[&?\??]utm_source=next\.36kr\.com/);
                                 if (Array.isArray(uriHref)) {
                                     query.productUrl = uriHref[1];
@@ -188,7 +187,7 @@ exports.getNext = function() {
 
                                 // console.log(apiProduct);
 
-                                queryDetail.equalTo("root", apiProduct.productRoot);
+                                queryDetail.equalTo("product", apiProduct.productRoot);
                                 queryDetail.find({
                                     success: function (resProduct) {
                                         var len = resProduct.length;
@@ -215,7 +214,7 @@ exports.getNext = function() {
                                     //  productDetail.set("pid", apiProduct.productId);
                                     productDetail.set("birth", apiProduct.productDay);
                                     productDetail.set("description", apiProduct.productDescription);
-                                    productDetail.set("root", apiProduct.productRoot);
+                                    productDetail.set("product", apiProduct.productRoot);
                                     productDetail.save().then(function () {
                                         callback(null);
                                     });
@@ -231,45 +230,36 @@ exports.getNext = function() {
 
                                 }
                             }
+                            /* , function (callback) {
+                             queryState.equalTo("parent", apiProduct.productRoot);
+                             queryState.find({
+                             success: function (resProductState) {
+                             var len = resProductState.length;
+                             //     console.log("resProductState:" + len + "--" + (++i));
+                             callback(null, len, resProductState);
+
+                             }
+                             ,error: function(error){
+                             if (error)  console.log(error);
+                             }
+                             });
+                             }*/
                             , function (callback) {
-                                queryState.equalTo("root", apiProduct.productRoot);
-                                queryState.find({
-                                    success: function (resProductState) {
-                                        var len = resProductState.length;
-                                        //     console.log("resProductState:" + len + "--" + (++i));
-                                        callback(null, len, resProductState);
 
-                                    }
-                                });
-                            }
-                            , function (len, resProductState, callback) {
-                                if (len == 0) {
-                                    //  console.log("State Return NotExists ");
-                                    productState.set("source", "next.36kr.com");
-                                    productState.set("root", apiProduct.productRoot);
-                                    //   productState.set("pid", apiProduct.productId);
-                                    productState.add("vote", apiProduct.productVote);
-                                    productState.add("updateTime", apiProduct.updateTime);
-                                    productState.add("commentCount", apiProduct.productComment);
-
-                                    productState.save().then(function () {
-                                            callback(null);
-                                        }
-                                    );
-                                }
-                                else if (len == 1) {
-                                    //  console.log("Existing in State !!   " + len + "--" + (++i))
-                                    resProductState[0].add("vote", apiProduct.productVote);
-                                    resProductState[0].add("updateTime", apiProduct.updateTime);
-                                    resProductState[0].add("commentCount", apiProduct.productComment);
-                                    resProductState[0].save().then(function () {
+                                //  console.log("State Return NotExists ");
+                                productState.set("source", "next.36kr.com");
+                                productState.set("product", apiProduct.productRoot);
+                                //   productState.set("pid", apiProduct.productId);
+                                productState.set("voteCount", apiProduct.productVote);
+                                //  productState.set("updateTime", apiProduct.updateTime);
+                                productState.set("commentCount", apiProduct.productComment);
+                                productState.save().then(function () {
                                         callback(null);
-                                    });
-                                }
-                                else {
-                                    console.log("Error!!!!!!!!!!!!!!!!!!!State Return Exists No:" + len);
-                                    callback(null);
-                                }
+                                    }, function (error) {
+                                        if (error)  console.log(error);
+                                    }
+                                );
+
                             }]
                         , function (error) {
                             if (error)  console.log(error);

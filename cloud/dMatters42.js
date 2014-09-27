@@ -2,8 +2,6 @@ var request = require('request');
 var async = require('async');
 var _ = require('underscore');
 var AV = require('avoscloud-sdk').AV;
-
-exports.get_details_state_from_matters42 = function(){
 AV.initialize("xv1cgfapsn90hyy2a42i9q6jg7phbfmdpt1404li6n93tt2r", "70sp4h8prccxzyfp56vwm9ksczji36bsrjvtwzvrzegfza67");
 
 var Product = AV.Object.extend("Product");
@@ -12,7 +10,6 @@ var ProductState = AV.Object.extend("ProductState");
 var queryList = new AV.Query(Product);
 var queryDetail = new AV.Query(ProductDetail);
 var queryState = new AV.Query(ProductState);
-
 
 async.waterfall([
       function (callback) {
@@ -23,8 +20,8 @@ async.waterfall([
             success: function (results) {
                 var queryUrlList = [];
                 for (var i = 0; i < results.length; i++) {
-                    var queryUrl = 'https://42matters.com/api/1/apps/lookup.json?&access_token=290404e24df33dd14a8a4df72bbb078504642f09&p=';
-                    queryUrl = queryUrl + results[i].get('name');
+                    var queryUrl = 'https://42matters.com/api/1/apps/lookup.json?&access_token=89eeb89fa2612ed63164eadd9727b04dfb81030e&p=';
+                    queryUrl = queryUrl + results[i].get('pid');
                     var item = {
                         productUrl: queryUrl,
                         productRoot: results[i],
@@ -91,7 +88,7 @@ async.waterfall([
             async.waterfall([
                  function (callback) {
 
-                    queryDetail.equalTo("root", apiProduct.productRoot);
+                    queryDetail.equalTo("product", apiProduct.productRoot);
                     queryDetail.find().then(function (resProduct) {
 
                         var len = resProduct.length
@@ -135,7 +132,7 @@ async.waterfall([
                                 productDetail.set("website", apiProduct.productDeta.website);
                                 productDetail.set("description", apiProduct.productDeta.description);
                                 productDetail.set("category", apiProduct.productDeta.category);
-                                productDetail.set("root", apiProduct.productRoot);
+                                productDetail.set("product", apiProduct.productRoot);
                                 productDetail.save().then(function(){
                                     callback(null);
                                 });
@@ -152,9 +149,9 @@ async.waterfall([
                             }
 
                   }
-               , function (callback) {
+               /*, function (callback) {
 
-                               queryState.equalTo("root", apiProduct.productRoot);
+                               queryState.equalTo("product", apiProduct.productRoot);
                                queryState.find({
 
                                 success: function (resProductState) {
@@ -165,34 +162,38 @@ async.waterfall([
                             });
 
 
-                    }
-               , function(len,resProductState,callback){
-                            var updateTime = new Date().getTime();
-                            if (len == 0) {
+                    }*/
+               , function(callback){
+                           // var updateTime = new Date().getTime();
+
                                 console.log("State Return NotExists ");
                                 productState.set("source", "42matters.com");
-                                productState.add("number_ratings", apiProduct.productDeta.number_ratings);
-                                productState.add("rating", apiProduct.productDeta.rating);
-                                productState.add("updateTime", updateTime);
-                                productState.set("root", apiProduct.productRoot);
+                                productState.set("number_ratings", apiProduct.productDeta.number_ratings);
+                                productState.set("rating", apiProduct.productDeta.rating);
+                              //  productState.add("updateTime", updateTime);
+                                productState.set("product", apiProduct.productRoot);
                                 productState.save().then(function () {
                                     callback(null);
                                 });
 
-                              }
+                           /*
                             else if (len == 1) {
-                                console.log("Existing!!!!!")
-                                resProductState[0].add("number_ratings", apiProduct.productDeta.number_ratings);
-                                resProductState[0].add("rating", apiProduct.productDeta.rating);
-                                resProductState[0].add("updateTime", updateTime);
-                                resProductState[0].save().then(function () {
+                             //   console.log("State Return NotExists ");
+                                productState.set("source", "42matters.com");
+                                productState.add("number_ratings", apiProduct.productDeta.number_ratings);
+                                productState.add("rating", apiProduct.productDeta.rating);
+                              //  productState.add("updateTime", updateTime);
+                                productState.set("product", apiProduct.productRoot);
+                                productState.save().then(function () {
                                     callback(null);
                                 });
+                              //  console.log("Existing!!!!!")
+
                             }
                             else {
                                 console.log("Error!!!!!!!!!!!!!!!!!!!State Return Exists No:" + len);
                                 callback(null);
-                            }
+                            }*/
                         }]
                , function(err){
                     if(err) console.log(err);
@@ -206,4 +207,3 @@ async.waterfall([
 ,function(err){
   if(err) console.log(err);
 });
-}
