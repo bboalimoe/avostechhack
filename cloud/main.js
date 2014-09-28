@@ -1,18 +1,28 @@
 // Use AV.Cloud.define to define as many cloud functions as you want.
 // For example:
-var matters42 = require('cloud/matters42.js');
-var rMatters42 = require('cloud/top_apps_local_weekly_matters42.js');
-var tNext = require('cloud/next.js');
-var ph = require('cloud/ph.js');
-AV.Cloud.define("avosMatters42", function(request, response) {
-    matters42.get_top_apps_local_weekly_matters42();
+var localWeeklyMatters42 = require('cloud/localWeeklyMatters42.js');
+var trendingDailyMatters42 = require('cloud/trendingDailyMatters42.js');
+var getDetailStateMatters42 = require('cloud/getDetailStateMatters42.js');
+var getWebsiteshot = require('cloud/getWebsiteshot.js');
+var getNext = require('cloud/next.js');
+var getProductHunt = require('cloud/ph.js');
+AV.Cloud.define("avosTopLocalWeeklyMatters42", function(request, response) {
+    localWeeklyMatters42.topLocalWeeklyMatters42();
 });
-AV.Cloud.define("avosRMatters42", function(request, response) {
-    rMatters42.get_details_state_from_matters42();
+AV.Cloud.define("avosTopTrendingDailyMatters42", function(request, response) {
+    trendingDailyMatters42.topTrendingDailyMatters42();
 });
-AV.Cloud.define("avosNext",function(request,response){
-    tNext.getNext();
+AV.Cloud.define("avosGetDetailsStateMatters42",function(request,response){
+    getDetailStateMatters42.getDetailsStateMatters42();
 });
-AV.Cloud.define("avosPh",function(request,response){
-    ph.getPH();
+AV.Cloud.define("avosGetWebsiteshot",function(request,response){
+    getWebsiteshot.getWebsiteshot();
+});
+
+AV.Cloud.define("avosGetNext36Kr",function(request,response){
+    getNext.getNext36Kr();
+});
+
+AV.Cloud.define("avosGetProductHunt",function(request,response){
+    getProductHunt.getProductHunt();
 });

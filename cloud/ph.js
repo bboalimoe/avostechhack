@@ -3,8 +3,7 @@ var cheerio = require('cheerio');
 var async = require('async');
 var _ = require('underscore');
 var AV = require('avoscloud-sdk').AV;
-
-exports.getPH = function() {
+exports.getProductHunt = function() {
     AV.initialize("xv1cgfapsn90hyy2a42i9q6jg7phbfmdpt1404li6n93tt2r", "70sp4h8prccxzyfp56vwm9ksczji36bsrjvtwzvrzegfza67");
 
     var Product = AV.Object.extend("Product");

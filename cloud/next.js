@@ -4,7 +4,7 @@ var async = require('async');
 var _ = require('underscore');
 var AV = require('avoscloud-sdk').AV;
 
-exports.getNext = function() {
+exports.getNext36Kr = function() {
     AV.initialize("xv1cgfapsn90hyy2a42i9q6jg7phbfmdpt1404li6n93tt2r", "70sp4h8prccxzyfp56vwm9ksczji36bsrjvtwzvrzegfza67");
 
     var Product = AV.Object.extend("Product");
@@ -12,7 +12,8 @@ exports.getNext = function() {
     var ProductState = AV.Object.extend("ProductState");
 
     async.waterfall([
-            function (callback) {
+
+            function (callback) {     //get the raw-data of next
                 var nextList = [];
                 request({url: 'http://next.36kr.com/posts', method: 'GET', headers: {
                     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -82,7 +83,7 @@ exports.getNext = function() {
                 });
 
             }
-            , function (productSet, callback) {
+            , function (productSet, callback) {             //Get the redirected url
                 console.log('SuccessfulGetProductSet!!!!!-No:' + productSet.length);
                 var i = 0;
                 async.each(productSet, function (query, next) {
@@ -122,7 +123,7 @@ exports.getNext = function() {
                 });
 
             }
-            , function (productSet, callback) {
+            , function (productSet, callback) {         //started to store data to avos of
 
                 var i = 0;
                 _.each(productSet, function (apiProduct) {
