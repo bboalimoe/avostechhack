@@ -13,7 +13,7 @@ exports.getWebsiteshot = function() {
                 var queryDetail = new AV.Query(TestProductDetail);
                 queryDetail.notEqualTo("websiteshotFlag", 2)
                 queryDetail.notEqualTo("website", "");
-                queryDetail.limit(50);
+                queryDetail.limit(10);
                 queryDetail.find({
                     success: function (results) {
                         console.log("Successfully get website url No:" + results.length);
@@ -26,9 +26,9 @@ exports.getWebsiteshot = function() {
                                 queryUrl: toQueryUrl
                             };
                             queryUrlList.push(item);
-
+}
                             callback(null, queryUrlList);
-                        }
+                        
                     }
                 });
             }
